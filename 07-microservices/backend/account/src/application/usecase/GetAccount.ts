@@ -15,8 +15,7 @@ export class GetAccount implements UseCase {
             name: account.getName(),
             email: account.getEmail(),
             document: account.getDocument(),
-            password: account.getPassword(),
-            // balances: wallet.balances.map((balance: any) => ({ assetId: balance.assetId, quantity: balance.quantity }))
+            password: account.getPassword()
         }
         return output;
     }
@@ -27,6 +26,5 @@ type Output = {
     name: string,
     email: string,
     document: string,
-    password: string,
-    // balances: { assetId: string, quantity: number}[]
+    password: string
 }

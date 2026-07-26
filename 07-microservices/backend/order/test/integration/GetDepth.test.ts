@@ -2,41 +2,41 @@ import { beforeEach, test, expect, afterEach } from "vitest";
 import ExecuteOrder from "../../src/application/usecase/ExecuteOrder.ts";
 import GetOrder from "../../src/application/usecase/GetOrder.ts";
 import PlaceOrder from "../../src/application/usecase/PlaceOrder.ts";
-import { Signup } from "../../src/application/usecase/Signup.ts";
 import type DatabaseConnection from "../../src/infra/database/DatabaseConnection.ts";
 import { PgPromiseAdapter } from "../../src/infra/database/DatabaseConnection.ts";
 import Mediator from "../../src/infra/handler/Mediator.ts";
-import type AccountRepository from "../../src/infra/repository/AccountRepository.ts";
-import { AccountRepositoryDatabase } from "../../src/infra/repository/AccountRepository.ts";
 import type OrderRepository from "../../src/infra/repository/OrderRepository.ts";
 import { OrderRepositoryDatabase } from "../../src/infra/repository/OrderRepository.ts";
 import type TradeRepository from "../../src/infra/repository/TradeRepository.ts";
 import { TradeRepositoryDatabase } from "../../src/infra/repository/TradeRepository.ts";
 import GetTrade from "../../src/application/usecase/GetTrade.ts";
 import GetDepth from "../../src/application/usecase/GetDepth.ts";
+import type AccountGateway from "../../src/infra/gateway/AccountGateway.ts";
+import { FetchAdapter } from "../../src/infra/http/HttpClient.ts";
+import { AccountGatewayHttp } from "../../src/infra/gateway/AccountGateway.ts";
 
 
 let databaseConnection: DatabaseConnection;
-let accountRepository: AccountRepository;
 let orderRepository: OrderRepository;
 let tradeRepository: TradeRepository;
+let accountGateway: AccountGateway;
 
 beforeEach(async () => {
     databaseConnection = new PgPromiseAdapter();
-    accountRepository = new AccountRepositoryDatabase(databaseConnection);
     orderRepository = new OrderRepositoryDatabase(databaseConnection);
     tradeRepository = new TradeRepositoryDatabase(databaseConnection);
+    const httpClient = new FetchAdapter();
+    accountGateway = new AccountGatewayHttp(httpClient);
 }); 
 
 test("Deve retornar a profundidade do mercado com precisão de 10000", async () => {
     const marketId = `BTC-USD-${Math.random()}`;
-    const signup = new Signup(accountRepository);
     const executeOrder = new ExecuteOrder(orderRepository, tradeRepository);
     const mediator = new Mediator();
     mediator.register("orderPlaced", async (event: any) => {
         await executeOrder.execute(event.marketId);
     });
-    const placeOrder = new PlaceOrder(accountRepository, orderRepository, mediator);
+    const placeOrder = new PlaceOrder(accountGateway, orderRepository, mediator);
     const getDepth = new GetDepth(orderRepository);
     const inputSignup = {
         name: "John Doe",
@@ -44,7 +44,7 @@ test("Deve retornar a profundidade do mercado com precisão de 10000", async () 
         document: "97456321558",
         password: "asdQWE123"
     }
-    const outputSignup = await signup.execute(inputSignup);
+    const outputSignup = await accountGateway.signup(inputSignup);
     await placeOrder.execute({
         accountId: outputSignup.accountId,
         marketId,
@@ -123,13 +123,12 @@ test("Deve retornar a profundidade do mercado com precisão de 10000", async () 
 
 test("Deve retornar a profundidade do mercado com precisão de 1", async () => {
     const marketId = `BTC-USD-${Math.random()}`;
-    const signup = new Signup(accountRepository);
     const executeOrder = new ExecuteOrder(orderRepository, tradeRepository);
     const mediator = new Mediator();
     mediator.register("orderPlaced", async (event: any) => {
         await executeOrder.execute(event.marketId);
     });
-    const placeOrder = new PlaceOrder(accountRepository, orderRepository, mediator);
+    const placeOrder = new PlaceOrder(accountGateway, orderRepository, mediator);
     const getDepth = new GetDepth(orderRepository);
     const inputSignup = {
         name: "John Doe",
@@ -137,7 +136,7 @@ test("Deve retornar a profundidade do mercado com precisão de 1", async () => {
         document: "97456321558",
         password: "asdQWE123"
     }
-    const outputSignup = await signup.execute(inputSignup);
+    const outputSignup = await accountGateway.signup(inputSignup);
     await placeOrder.execute({
         accountId: outputSignup.accountId,
         marketId,

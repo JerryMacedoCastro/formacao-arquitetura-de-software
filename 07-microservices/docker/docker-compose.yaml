@@ -10,3 +10,13 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123456
       POSTGRES_DB: app
+  order-db:
+    image: postgres:18.4
+    ports:
+      - 5433:5432
+    volumes:
+      - ../database/order-create.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: app

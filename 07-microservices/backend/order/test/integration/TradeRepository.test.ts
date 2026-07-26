@@ -1,6 +1,5 @@
 import { test, expect } from "vitest";
 import { PgPromiseAdapter } from "../../src/infra/database/DatabaseConnection.ts";
-import crypto from "crypto";
 import Trade from "../../src/domain/Trade.ts";
 import { TradeRepositoryDatabase } from "../../src/infra/repository/TradeRepository.ts";
 import UUID from "../../src/domain/UUID.ts";

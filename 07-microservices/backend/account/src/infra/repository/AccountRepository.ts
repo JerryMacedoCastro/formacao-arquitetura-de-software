@@ -80,6 +80,7 @@ export class AccountRepositoryORM implements AccountRepository {
 
     async getById(accountId: string): Promise<Account> {
         const accountModel = await this.orm.get(AccountModel, "account_id", accountId);
+        if (!accountModel) throw new Error("Account not found");
         return accountModel.toEntity();
     }
 

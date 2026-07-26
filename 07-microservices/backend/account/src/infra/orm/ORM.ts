@@ -27,6 +27,7 @@ export default class ORM {
     async get (model: any, column: string, value: string) {
         const query = `select * from ${model.prototype.schema}.${model.prototype.table} where ${column} = $1`;
         const [data] = await this.databaseConnection.query(query, [value]);
+        if (!data) return;
         const output = new model();
         for (const column of model.prototype.columns) {
             output[column.property] = data[column.column];

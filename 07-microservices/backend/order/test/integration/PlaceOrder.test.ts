@@ -2,23 +2,23 @@ import { beforeEach, test, expect, afterEach } from "vitest";
 import ExecuteOrder from "../../src/application/usecase/ExecuteOrder.ts";
 import GetOrder from "../../src/application/usecase/GetOrder.ts";
 import PlaceOrder from "../../src/application/usecase/PlaceOrder.ts";
-import { Signup } from "../../src/application/usecase/Signup.ts";
 import type DatabaseConnection from "../../src/infra/database/DatabaseConnection.ts";
 import { PgPromiseAdapter } from "../../src/infra/database/DatabaseConnection.ts";
 import Mediator from "../../src/infra/handler/Mediator.ts";
-import type AccountRepository from "../../src/infra/repository/AccountRepository.ts";
-import { AccountRepositoryDatabase } from "../../src/infra/repository/AccountRepository.ts";
 import type OrderRepository from "../../src/infra/repository/OrderRepository.ts";
 import { OrderRepositoryDatabase } from "../../src/infra/repository/OrderRepository.ts";
 import type TradeRepository from "../../src/infra/repository/TradeRepository.ts";
 import { TradeRepositoryDatabase } from "../../src/infra/repository/TradeRepository.ts";
 import GetTrade from "../../src/application/usecase/GetTrade.ts";
+import type AccountGateway from "../../src/infra/gateway/AccountGateway.ts";
+import { FetchAdapter } from "../../src/infra/http/HttpClient.ts";
+import { AccountGatewayHttp } from "../../src/infra/gateway/AccountGateway.ts";
 
 
 let databaseConnection: DatabaseConnection;
-let accountRepository: AccountRepository;
 let orderRepository: OrderRepository;
 let tradeRepository: TradeRepository;
+let accountGateway: AccountGateway;
 
 function sleep (time: number) {
     return new Promise((resolve) => {
@@ -30,16 +30,16 @@ function sleep (time: number) {
 
 beforeEach(async () => {
     databaseConnection = new PgPromiseAdapter();
-    accountRepository = new AccountRepositoryDatabase(databaseConnection);
     orderRepository = new OrderRepositoryDatabase(databaseConnection);
     tradeRepository = new TradeRepositoryDatabase(databaseConnection);
+    const httpClient = new FetchAdapter();
+    accountGateway = new AccountGatewayHttp(httpClient);
 }); 
 
 test("Deve criar uma ordem de compra", async () => {
     const marketId = `BTC-USD-${Math.random()}`;
-    const signup = new Signup(accountRepository);
     const mediator = new Mediator();
-    const placeOrder = new PlaceOrder(accountRepository, orderRepository, mediator);
+    const placeOrder = new PlaceOrder(accountGateway, orderRepository, mediator);
     const getOrder = new GetOrder(orderRepository);
     const inputSignup = {
         name: "John Doe",
@@ -47,7 +47,7 @@ test("Deve criar uma ordem de compra", async () => {
         document: "97456321558",
         password: "asdQWE123"
     }
-    const outputSignup = await signup.execute(inputSignup);
+    const outputSignup = await accountGateway.signup(inputSignup);
     const inputPlaceOrder = {
         accountId: outputSignup.accountId,
         marketId,
@@ -67,13 +67,12 @@ test("Deve criar uma ordem de compra", async () => {
 
 test("Deve executar uma ordem de compra com uma ordem de venda", async () => {
     const marketId = `BTC-USD-${Math.random()}`;
-    const signup = new Signup(accountRepository);
     const executeOrder = new ExecuteOrder(orderRepository, tradeRepository);
     const mediator = new Mediator();
     mediator.register("orderPlaced", async (event: any) => {
         await executeOrder.execute(event.marketId);
     });
-    const placeOrder = new PlaceOrder(accountRepository, orderRepository, mediator);
+    const placeOrder = new PlaceOrder(accountGateway, orderRepository, mediator);
     const getOrder = new GetOrder(orderRepository);
     const getTrade = new GetTrade(tradeRepository);
     const inputSignup = {
@@ -82,7 +81,7 @@ test("Deve executar uma ordem de compra com uma ordem de venda", async () => {
         document: "97456321558",
         password: "asdQWE123"
     }
-    const outputSignup = await signup.execute(inputSignup);
+    const outputSignup = await accountGateway.signup(inputSignup);
     const inputPlaceOrderBuy = {
         accountId: outputSignup.accountId,
         marketId,
@@ -119,13 +118,12 @@ test("Deve executar uma ordem de compra com uma ordem de venda", async () => {
 
 test("Deve executar uma ordem de compra com duas ordens de venda", async () => {
     const marketId = `BTC-USD-${Math.random()}`;
-    const signup = new Signup(accountRepository);
     const executeOrder = new ExecuteOrder(orderRepository, tradeRepository);
     const mediator = new Mediator();
     mediator.register("orderPlaced", async (event: any) => {
         await executeOrder.execute(event.marketId);
     });
-    const placeOrder = new PlaceOrder(accountRepository, orderRepository, mediator);
+    const placeOrder = new PlaceOrder(accountGateway, orderRepository, mediator);
     const getOrder = new GetOrder(orderRepository);
     const getTrade = new GetTrade(tradeRepository);
     const inputSignup = {
@@ -134,7 +132,7 @@ test("Deve executar uma ordem de compra com duas ordens de venda", async () => {
         document: "97456321558",
         password: "asdQWE123"
     }
-    const outputSignup = await signup.execute(inputSignup);
+    const outputSignup = await accountGateway.signup(inputSignup);
     const inputPlaceOrderBuy = {
         accountId: outputSignup.accountId,
         marketId,
@@ -183,13 +181,12 @@ test("Deve executar uma ordem de compra com duas ordens de venda", async () => {
 
 test("Deve executar uma ordem de compra com duas ordens de venda com preços diferentes", async () => {
     const marketId = `BTC-USD-${Math.random()}`;
-    const signup = new Signup(accountRepository);
     const executeOrder = new ExecuteOrder(orderRepository, tradeRepository);
     const mediator = new Mediator();
     mediator.register("orderPlaced", async (event: any) => {
         await executeOrder.execute(event.marketId);
     });
-    const placeOrder = new PlaceOrder(accountRepository, orderRepository, mediator);
+    const placeOrder = new PlaceOrder(accountGateway, orderRepository, mediator);
     const getOrder = new GetOrder(orderRepository);
     const getTrade = new GetTrade(tradeRepository);
     const inputSignup = {
@@ -198,7 +195,7 @@ test("Deve executar uma ordem de compra com duas ordens de venda com preços dif
         document: "97456321558",
         password: "asdQWE123"
     }
-    const outputSignup = await signup.execute(inputSignup);
+    const outputSignup = await accountGateway.signup(inputSignup);
     const inputPlaceOrderSell1 = {
         accountId: outputSignup.accountId,
         marketId,

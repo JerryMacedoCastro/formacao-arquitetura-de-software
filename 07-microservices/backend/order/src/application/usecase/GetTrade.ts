@@ -8,10 +8,10 @@ export default class GetTrade {
     async execute (input: Input): Promise<Output> {
         const trade = await this.tradeRepository.getByBuyOrderIdAndSellOrderId(input.buyOrderId, input.sellOrderId);
         return {
-            tradeId: trade.tradeId,
+            tradeId: trade.getTradeId(),
             marketId: trade.marketId,
-            buyOrderId: trade.buyOrderId,
-            sellOrderId: trade.sellOrderId,
+            buyOrderId: trade.getBuyOrderId(),
+            sellOrderId: trade.getSellOrderId(),
             side: trade.side,
             quantity: trade.quantity,
             price: trade.price,
