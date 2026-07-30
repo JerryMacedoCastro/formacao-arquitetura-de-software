@@ -47,7 +47,7 @@ test("Deve executar uma ordem de compra com uma ordem de venda", async () => {
         body: JSON.stringify(inputPlaceOrderSell)
     });
     const outputPlaceOrderSell = await responsePlaceOrderSell.json();
-    await sleep(200);
+    await sleep(3000);
     const responseGetOrderBuy = await fetch(`http://localhost:3001/orders/${outputPlaceOrderBuy.orderId}`);
     const outputGetOrderBuy = await responseGetOrderBuy.json();
     console.log(outputGetOrderBuy);
