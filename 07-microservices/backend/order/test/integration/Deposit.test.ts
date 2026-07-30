@@ -25,8 +25,9 @@ beforeEach(async () => {
     getWallet = new GetWallet(walletRepository);
 }); 
 
-test("Deve fazer dois depósitos do mesmo tipo de recurso em uma conta", async () => {
-    const paymentGateway = new PaymentGatewayFake();
+test.only("Deve fazer dois depósitos do mesmo tipo de recurso em uma conta", async () => {
+    const httpClient = new FetchAdapter();
+    const paymentGateway = new PaymentGatewayHttp(httpClient);
     const deposit = new Deposit(accountGateway, walletRepository, paymentGateway);
     const inputSignup = {
         name: "John Doe",
