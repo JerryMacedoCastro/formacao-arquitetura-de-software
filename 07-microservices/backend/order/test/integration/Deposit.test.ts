@@ -11,6 +11,7 @@ import type WalletRepository from "../../src/infra/repository/WalletRepository.t
 import { WalletRepositoryDatabase } from "../../src/infra/repository/WalletRepository.ts";
 import type AccountGateway from "../../src/infra/gateway/AccountGateway.ts";
 import { AccountGatewayHttp } from "../../src/infra/gateway/AccountGateway.ts";
+import { PaymentGatewayFakeProcessor, PaymentGatewayHttpProcessor } from "../../src/infra/util/fallback.ts";
 
 let databaseConnection: DatabaseConnection;
 let walletRepository: WalletRepository;
@@ -28,7 +29,9 @@ beforeEach(async () => {
 test.only("Deve fazer dois depósitos do mesmo tipo de recurso em uma conta", async () => {
     const httpClient = new FetchAdapter();
     const paymentGateway = new PaymentGatewayHttp(httpClient);
-    const deposit = new Deposit(accountGateway, walletRepository, paymentGateway);
+    const paymentProcessorB = new PaymentGatewayFakeProcessor(undefined);
+    const paymentProcessorA = new PaymentGatewayHttpProcessor(paymentProcessorB);
+    const deposit = new Deposit(accountGateway, walletRepository, paymentGateway, paymentProcessorA);
     const inputSignup = {
         name: "John Doe",
         email: "john.doe@gmail.com",
