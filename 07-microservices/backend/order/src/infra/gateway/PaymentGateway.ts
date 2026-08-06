@@ -11,7 +11,7 @@ export class PaymentGatewayHttp implements PaymentGateway {
 
     async processTransaction (input: Input): Promise<any> {
 		console.log("invoking PaymentGatewayHttp");
-		throw new Error("Out of service...");
+		// throw new Error("Out of service...");
         const [month, year] = input.creditCardExpDate.split("/");
         const creditCard = {
 			nome_cartao: input.creditCardHolder,
@@ -43,7 +43,7 @@ export class PaymentGatewayFake implements PaymentGateway {
 
     async processTransaction(input: Input): Promise<any> {
 		console.log("Invoking PaymentGatewayFake");
-		throw new Error("Out of service...");
+		// throw new Error("Out of service...");
         return {
             autorizada: "1"
         }
