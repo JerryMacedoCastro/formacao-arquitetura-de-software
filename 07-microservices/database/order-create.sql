@@ -9,6 +9,22 @@ create table app.balance (
     primary key (account_id, asset_id)
 );
 
+create table app.deposit (
+    deposit_id uuid,
+    account_id uuid,
+    asset_id text,
+    quantity numeric,
+    status text,
+    credit_card_holder text,
+    credit_card_number text,
+    credit_card_exp_date text,
+    credit_card_cvv text,
+    created_at timestamptz,
+    paid_at timestamptz,
+    canceled_at timestamptz,
+    primary key (deposit_id)
+);
+
 create table app.order (
     order_id uuid,
     account_id uuid,
