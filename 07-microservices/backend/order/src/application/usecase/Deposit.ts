@@ -26,19 +26,19 @@ export class Deposit implements UseCase {
             amount: input.quantity
         }
         // await retry(async () => {
-        //     const outputProcessTransaction = await this.paymentGateway.processTransaction(inputProcessTransaction);
-        //     if (outputProcessTransaction.autorizada === "1") {
-        //         const wallet = await this.walletRepository.getByAccountId(account.accountId);
-        //         wallet.deposit(input.assetId, input.quantity);
-        //         await this.walletRepository.update(wallet);
-        //     }
+            const outputProcessTransaction = await this.paymentGateway.processTransaction(inputProcessTransaction);
+            if (outputProcessTransaction.autorizada === "1") {
+                const wallet = await this.walletRepository.getByAccountId(account.accountId);
+                wallet.deposit(input.assetId, input.quantity);
+                await this.walletRepository.update(wallet);
+            }
         // }, 5, 500);
-        const outputProcessTransaction = await this.paymentProcessor.processTransaction(inputProcessTransaction);
-        if (outputProcessTransaction.autorizada === "1") {
-            const wallet = await this.walletRepository.getByAccountId(account.accountId);
-            wallet.deposit(input.assetId, input.quantity);
-            await this.walletRepository.update(wallet);
-        }
+        // const outputProcessTransaction = await this.paymentProcessor.processTransaction(inputProcessTransaction);
+        // if (outputProcessTransaction.autorizada === "1") {
+        //     const wallet = await this.walletRepository.getByAccountId(account.accountId);
+        //     wallet.deposit(input.assetId, input.quantity);
+        //     await this.walletRepository.update(wallet);
+        // }
     }
 }
 
