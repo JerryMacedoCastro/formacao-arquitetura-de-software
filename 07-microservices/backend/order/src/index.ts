@@ -29,6 +29,7 @@ async function main () {
     await queue.setup("orderPlaced", "orderPlaced.insertOrder");
     await queue.setup("orderFilled", "orderFilled.fillOrder");
     await queue.setup("tradeCreated", "tradeCreated.createTrade");
+    await queue.setup("depositCreated", "depositCreated.processPayment");
     // const httpServer = new HapiAdapter();
     // const httpClient = new AxiosAdapter();
     const httpClient = new FetchAdapter();

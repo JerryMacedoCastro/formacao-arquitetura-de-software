@@ -3,6 +3,7 @@ import type DatabaseConnection from "../database/DatabaseConnection.ts";
 
 export default interface DepositRepository {
     save (deposit: Deposit): Promise<void>;
+    update (deposit: Deposit): Promise<void>;
     get (depositId: string): Promise<Deposit>;
 }
 
@@ -13,6 +14,10 @@ export class DepositRepositoryDatabase implements DepositRepository {
 
     async save(deposit: Deposit): Promise<void> {
         await this.databaseConnection.query("insert into app.deposit (deposit_id, account_id, asset_id, quantity, status, credit_card_holder, credit_card_number, credit_card_exp_date, credit_card_cvv, created_at, paid_at, canceled_at) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)", [deposit.depositId, deposit.accountId, deposit.assetId, deposit.quantity, deposit.status, deposit.creditCardHolder, deposit.creditCardNumber, deposit.creditCardExpDate, deposit.creditCardCvv, deposit.createdAt, deposit.paidAt, deposit.canceledAt]);
+    }
+
+    async update(deposit: Deposit): Promise<void> {
+        await this.databaseConnection.query("update app.deposit set status = $1 where deposit_id = $2", [deposit.status, deposit.depositId]);
     }
     
     async get(depositId: string): Promise<Deposit> {
