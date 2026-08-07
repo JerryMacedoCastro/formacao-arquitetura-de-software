@@ -23,4 +23,8 @@ export default class Deposit {
         this.status = "confirmed";
     }
 
+    cancel () {
+        this.status = "canceled";
+    }
+
 }
