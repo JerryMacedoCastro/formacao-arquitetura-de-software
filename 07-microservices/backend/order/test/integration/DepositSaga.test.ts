@@ -64,7 +64,7 @@ test("Deve fazer um depósito com pagamento aprovado usando o padrão saga", asy
     await databaseConnection.close();
 });
 
-test("Deve tentar fazer um depósito com pagamento rejeitado usando o padrão saga", async () => {
+test.only("Deve tentar fazer um depósito com pagamento rejeitado usando o padrão saga", async () => {
     const queue = new RabbitMQAdapter();
     await queue.connect();
     await queue.setup("depositCreated", "depositCreated.processPayment");

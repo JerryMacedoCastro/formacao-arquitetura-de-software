@@ -1,3 +1,4 @@
+import type { CancelDeposit } from "../../application/usecase/CancelDeposit.ts";
 import type { ConfirmDeposit } from "../../application/usecase/ConfirmDeposit.ts";
 import type { ProcessPayment } from "../../application/usecase/ProcessPayment.ts";
 import type Queue from "../queue/Queue.ts";
