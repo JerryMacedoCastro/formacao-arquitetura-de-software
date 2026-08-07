@@ -17,7 +17,7 @@ import GetDeposit from "../../src/application/usecase/GetDeposit.ts";
 import sinon from "sinon";
 import { CancelDeposit } from "../../src/application/usecase/CancelDeposit.ts";
 
-test("Deve fazer um depósito com pagamento aprovado usando o padrão saga", async () => {
+test.only("Deve fazer um depósito com pagamento aprovado usando o padrão saga", async () => {
     const queue = new RabbitMQAdapter();
     await queue.connect();
     await queue.setup("depositCreated", "depositCreated.processPayment");
@@ -31,11 +31,11 @@ test("Deve fazer um depósito com pagamento aprovado usando o padrão saga", asy
     const walletRepository = new WalletRepositoryDatabase(databaseConnection);
     const deposit = new DepositSaga(accountGateway, depositRepository, queue);
     const getWallet = new GetWallet(walletRepository);
-    const processPayment = new ProcessPayment(depositRepository, paymentGateway, queue);
+    // const processPayment = new ProcessPayment(depositRepository, paymentGateway, queue);
     const confirmDeposit = new ConfirmDeposit(walletRepository, depositRepository);
     const cancelDeposit = new CancelDeposit(depositRepository);
     const getDeposit = new GetDeposit(depositRepository);
-    new DepositHandler(queue, processPayment);
+    // new DepositHandler(queue, processPayment);
     new PaymentHandler(queue, confirmDeposit, cancelDeposit);
     const inputSignup = {
         name: "John Doe",
@@ -64,7 +64,7 @@ test("Deve fazer um depósito com pagamento aprovado usando o padrão saga", asy
     await databaseConnection.close();
 });
 
-test.only("Deve tentar fazer um depósito com pagamento rejeitado usando o padrão saga", async () => {
+test("Deve tentar fazer um depósito com pagamento rejeitado usando o padrão saga", async () => {
     const queue = new RabbitMQAdapter();
     await queue.connect();
     await queue.setup("depositCreated", "depositCreated.processPayment");

@@ -12,7 +12,11 @@ export default class GetDeposit {
             accountId: deposit.accountId,
             assetId: deposit.assetId,
             quantity: deposit.quantity,
-            status: deposit.status
+            status: deposit.status,
+            creditCardHolder: deposit.creditCardHolder,
+            creditCardNumber: deposit.creditCardNumber,
+            creditCardExpDate: deposit.creditCardExpDate,
+            creditCardCvv: deposit.creditCardCvv,
         }
     }
 }
@@ -22,5 +26,9 @@ type Output = {
     accountId: string,
     assetId: string,
     quantity: number,
-    status: string
+    status: string,
+    creditCardHolder: string,
+    creditCardNumber: string,
+    creditCardExpDate: string,
+    creditCardCvv: string,
 }
