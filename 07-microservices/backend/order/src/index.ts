@@ -2,6 +2,7 @@ import CreateTrade from "./application/usecase/CreateTrade.ts";
 import { Deposit } from "./application/usecase/Deposit.ts";
 import ExecuteOrder from "./application/usecase/ExecuteOrder.ts";
 import FillOrder from "./application/usecase/FillOrder.ts";
+import GetDeposit from "./application/usecase/GetDeposit.ts";
 import GetOrder from "./application/usecase/GetOrder.ts";
 import PlaceOrder from "./application/usecase/PlaceOrder.ts";
 import Book from "./domain/Book.ts";
@@ -17,6 +18,7 @@ import { FetchAdapter } from "./infra/http/HttpClient.ts";
 import { ExpressAdapter } from "./infra/http/HttpServer.ts";
 import ORM from "./infra/orm/ORM.ts";
 import { RabbitMQAdapter } from "./infra/queue/Queue.ts";
+import { DepositRepositoryDatabase } from "./infra/repository/DepositRepository.ts";
 import { OrderRepositoryDatabase } from "./infra/repository/OrderRepository.ts";
 import { TradeRepositoryDatabase } from "./infra/repository/TradeRepository.ts";
 import { WalletRepositoryDatabase } from "./infra/repository/WalletRepository.ts";
@@ -40,6 +42,7 @@ async function main () {
     const orderRepository = new OrderRepositoryDatabase(databaseConnection);
     const tradeRepository = new TradeRepositoryDatabase(databaseConnection);
     const walletRepository = new WalletRepositoryDatabase(databaseConnection);
+    const depositRepository = new DepositRepositoryDatabase(databaseConnection);
     const paymentGateway = new PaymentGatewayHttp(httpClient);
     const accountGateway = new AccountGatewayHttp(httpClient);
     const matchingEngineGateway = new MatchingEngineGatewayHttp(httpClient);
@@ -49,9 +52,10 @@ async function main () {
     const getOrder = new GetOrder(orderRepository);
     const fillOrder = new FillOrder(orderRepository);
     const createTrade = new CreateTrade(tradeRepository);
+    const getDeposit = new GetDeposit(depositRepository);
     new OrderHandler(mediator, executeOrder, book, orderRepository, matchingEngineGateway, queue, fillOrder, createTrade);
     new BookHandler(book, fillOrder, createTrade);
-    new OrderController(httpServer, placeOrder, getOrder, fillOrder, createTrade);
+    new OrderController(httpServer, placeOrder, getOrder, fillOrder, createTrade, getDeposit);
     httpServer.listen(3001);
 }
 
