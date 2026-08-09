@@ -3,6 +3,7 @@ import { Deposit } from "./application/usecase/Deposit.ts";
 import ExecuteOrder from "./application/usecase/ExecuteOrder.ts";
 import FillOrder from "./application/usecase/FillOrder.ts";
 import GetDeposit from "./application/usecase/GetDeposit.ts";
+import GetDepth from "./application/usecase/GetDepth.ts";
 import GetOrder from "./application/usecase/GetOrder.ts";
 import PlaceOrder from "./application/usecase/PlaceOrder.ts";
 import Book from "./domain/Book.ts";
@@ -53,9 +54,10 @@ async function main () {
     const fillOrder = new FillOrder(orderRepository);
     const createTrade = new CreateTrade(tradeRepository);
     const getDeposit = new GetDeposit(depositRepository);
+    const getDepth = new GetDepth(orderRepository);
     new OrderHandler(mediator, executeOrder, book, orderRepository, matchingEngineGateway, queue, fillOrder, createTrade);
     new BookHandler(book, fillOrder, createTrade);
-    new OrderController(httpServer, placeOrder, getOrder, fillOrder, createTrade, getDeposit);
+    new OrderController(httpServer, placeOrder, getOrder, fillOrder, createTrade, getDeposit, getDepth);
     httpServer.listen(3001);
 }
 
