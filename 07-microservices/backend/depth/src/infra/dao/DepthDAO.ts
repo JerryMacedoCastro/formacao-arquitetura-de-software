@@ -2,6 +2,7 @@ import type DatabaseConnection from "../database/DatabaseConnection.ts";
 
 export default interface DepthDAO {
     upsert (depth: any): Promise<void>;
+    listByMarketId (marketId: string): Promise<any>;
 }
 
 export class DepthDAODatabase implements DepthDAO {
@@ -11,6 +12,11 @@ export class DepthDAODatabase implements DepthDAO {
 
     async upsert(depth: any): Promise<void> {
         await this.databaseConnection.query("insert into app.depth (market_id, side, price, quantity) values ($1, $2, $3, $4)", [depth.marketId, depth.side, depth.price, depth.quantity]);
+    }
+
+    async listByMarketId(marketId: string): Promise<any> {
+        const depthData = await this.databaseConnection.query("select * from app.depth where market_id = $1", [marketId]);
+        return depthData;
     }
 
 }

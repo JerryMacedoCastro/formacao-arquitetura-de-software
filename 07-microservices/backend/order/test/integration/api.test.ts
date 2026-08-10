@@ -107,8 +107,8 @@ test.only("Deve calcular o depth do mercado", async () => {
         body: JSON.stringify(inputPlaceOrderSell)
     });
     const outputPlaceOrderSell = await responsePlaceOrderSell.json();
-    await sleep(100);
-    const responseGetDepth = await fetch(`http://localhost:3001/markets/${marketId}/depth`);
+    await sleep(300);
+    const responseGetDepth = await fetch(`http://localhost:3003/markets/${marketId}/depth`);
     const outputGetDepth = await responseGetDepth.json();
     expect(outputGetDepth.buys).toHaveLength(1);
     expect(outputGetDepth.sells).toHaveLength(1);
