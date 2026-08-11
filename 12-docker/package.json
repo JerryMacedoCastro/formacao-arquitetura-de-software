@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "build": "tsc",
     "docker:build": "docker build -t formacao-arquitetura-de-software-docker .",
     "docker:run": "docker run --env-file .env -p 3000:8080 -v $(pwd)/logs:/app/logs formacao-arquitetura-de-software-docker"
   },
@@ -14,5 +15,10 @@
   "dependencies": {
     "express": "^5.2.1",
     "pg-promise": "^12.7.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.2.0",
+    "typescript": "^7.0.2"
   }
 }

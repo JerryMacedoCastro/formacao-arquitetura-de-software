@@ -1,0 +1,27 @@
+name: formacao-arquitetura-de-software-docker
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:8080
+    volumes:
+      - ./logs:/app/logs
+    env_file:
+      - .env
+  db:
+    image: postgres:18.4
+    ports:
+      - 5432:5432
+    volumes:
+      - ./create.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: app
+  queue:
+    image: rabbitmq:4.2-management
+    ports:
+      - 5672:5672
+      - 15672:15672
