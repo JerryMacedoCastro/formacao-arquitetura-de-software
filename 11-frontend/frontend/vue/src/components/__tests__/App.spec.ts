@@ -82,3 +82,15 @@ test("Deve validar o fluxo de mensagens de erro de preenchimento da tela de cria
   await wrapper.get(".button-confirm").trigger("click");
   expect(wrapper.get(".span-error").text()).toBe("");
 });
+
+test("Deve chamar confirmar a criação da conta com o backend", async () => {
+  const wrapper = mount(App, {});
+  await wrapper.get(".input-name").setValue("John Joe");
+  await wrapper.get(".input-email").setValue("john.doe@gmail.com");
+  await wrapper.get(".input-document").setValue("97456321558");
+  await wrapper.get(".button-next").trigger("click");
+  await wrapper.get(".input-password").setValue("asdQWE123");
+  await wrapper.get(".input-confirm-password").setValue("asdQWE123");
+  await wrapper.get(".button-confirm").trigger("click");
+  await wrapper.get(".span-success").trigger("Conta criada com sucesso");
+});

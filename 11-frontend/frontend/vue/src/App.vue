@@ -8,6 +8,7 @@
   let password = ref("");
   let confirmPassword = ref("");
   let error = ref("");
+  let success = ref("");
 
   function next () {
     error.value = "";
@@ -30,7 +31,7 @@
     step.value--;
   }
 
-  function confirm () {
+  async function confirm () {
     error.value = "";
     if (!password.value) {
       error.value = "Preencha a senha";
@@ -43,6 +44,25 @@
     if (password.value !== confirmPassword.value) {
       error.value = "A senha e a confirmação da senha devem ser iguais";
       return;
+    }
+    const input = {
+      name: name.value,
+      email: email.value,
+      document: document.value,
+      password: password.value
+    }
+    const responseSignup = await fetch("http://localhost:3000/signup", {
+        method: "POST",
+        headers: {
+            "content-type": "application/json"
+        },
+        body: JSON.stringify(input)
+    });
+    const outputSignup = await responseSignup.json();
+    if (outputSignup.accountId) {
+      success.value = "Conta criada com sucesso";
+    } else {
+      error.value = "Falha ao tentar criar a conta";
     }
   }
 
@@ -68,6 +88,7 @@
   <div>
     <div>
       <span class="span-step">{{ step }}</span>
+      <br/>
       <span class="span-progress">{{ getProgress() }}%</span>
     </div>
     <div v-if="step === 1">
@@ -94,6 +115,7 @@
       <button v-if="step === 2" class="button-previous" @click="previous()">Voltar</button>
       <button v-if="step === 2" class="button-confirm" @click="confirm()">Confirmar</button>
       <span class="span-error">{{ error }}</span>
+      <span class="span-success">{{ success }}</span>
     </div>
   </div>
 </template>
