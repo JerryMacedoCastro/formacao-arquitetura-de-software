@@ -1,0 +1,37 @@
+name: formacao-arquitetura-de-software
+services:
+  account-db:
+    image: postgres:18.4
+    ports:
+      - 5432:5432
+    volumes:
+      - ../database/account-create.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: app
+  order-db:
+    image: postgres:18.4
+    ports:
+      - 5433:5432
+    volumes:
+      - ../database/order-create.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: app
+  depth-db:
+    image: postgres:18.4
+    ports:
+      - 5434:5432
+    volumes:
+      - ../database/depth-create.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: app
+  queue:
+    image: rabbitmq:4.2-management
+    ports:
+      - 5672:5672
+      - 15672:15672

@@ -1,0 +1,14 @@
+{
+  "name": "formacao-arquitetura-de-software",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "compose:up": "docker compose -f docker/docker-compose.yaml up -d",
+    "compose:down": "docker compose -f docker/docker-compose.yaml down -v --remove-orphans"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
