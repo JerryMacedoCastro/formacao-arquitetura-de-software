@@ -3,6 +3,14 @@ import { test, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 import App from "../../App.vue";
 
+export function sleep (time: number) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(true);
+        }, time);
+    })
+}
+
 test("Deve validar o progresso no preenchimento da tela de criação da conta", async () => {
   const wrapper = mount(App, {});
   expect(wrapper.get(".span-step").text()).toBe("1");
@@ -92,5 +100,6 @@ test("Deve chamar confirmar a criação da conta com o backend", async () => {
   await wrapper.get(".input-password").setValue("asdQWE123");
   await wrapper.get(".input-confirm-password").setValue("asdQWE123");
   await wrapper.get(".button-confirm").trigger("click");
-  await wrapper.get(".span-success").trigger("Conta criada com sucesso");
+  await sleep(200);
+  expect(wrapper.get(".span-success").text()).toBe("Conta criada com sucesso");
 });
