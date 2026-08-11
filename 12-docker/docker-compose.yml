@@ -10,6 +10,11 @@ services:
       - ./logs:/app/logs
     env_file:
       - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      queue:
+        condition: service_healthy
   db:
     image: postgres:18.4
     ports:
@@ -20,8 +25,16 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123456
       POSTGRES_DB: app
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d app"]
+      interval: 5s
+      retries: 10
   queue:
     image: rabbitmq:4.2-management
     ports:
       - 5672:5672
       - 15672:15672
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      retries: 10

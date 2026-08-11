@@ -2,6 +2,7 @@ import express, { type Request, type Response } from "express";
 import fs from "fs/promises";
 import path from "path";
 import pgp from "pg-promise";
+import amqp from "amqplib";
 
 const logFile = path.join(import.meta.dirname, "logs/server.log");
 
@@ -10,6 +11,13 @@ async function main () {
     app.use(express.json());
     const databaseConnection = pgp()("postgres://postgres:123456@db:5432/app");
     await databaseConnection.query("insert into app.account (account_id, name, email, document, password) values ($1, $2, $3, $4, $5)", [crypto.randomUUID(), "John Doe", "john.doe@gmail.com", "111.111.111-11", "asdQWE123"]);
+
+    const queueConnection = await amqp.connect("amqp://queue");
+    const channel = await queueConnection.createChannel();
+    await channel.assertExchange("test", "direct", { durable: true });
+    await channel.assertQueue("test.a", { durable: true });
+    await channel.bindQueue("test.a", "test", "");
+
     console.log(process.argv);
     console.log(process.env.PORT);
     console.log(new Date(), "main");

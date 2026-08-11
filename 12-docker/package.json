@@ -7,16 +7,20 @@
   "scripts": {
     "build": "tsc",
     "docker:build": "docker build -t formacao-arquitetura-de-software-docker .",
-    "docker:run": "docker run --env-file .env -p 3000:8080 -v $(pwd)/logs:/app/logs formacao-arquitetura-de-software-docker"
+    "docker:run": "docker run --env-file .env -p 3000:8080 -v $(pwd)/logs:/app/logs formacao-arquitetura-de-software-docker",
+    "compose:up": "docker compose up --build --force-recreate -d",
+    "compose:down": "docker compose down -v"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "amqplib": "^2.0.1",
     "express": "^5.2.1",
     "pg-promise": "^12.7.0"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.10.8",
     "@types/express": "^5.0.6",
     "@types/node": "^26.2.0",
     "typescript": "^7.0.2"
