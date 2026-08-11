@@ -1,19 +1,20 @@
 <script setup lang="ts">
   import { inject, ref } from 'vue';
   import type AccountGateway from './gateways/AccountGateway';
-import SignupForm from './entities/SignupForm';
+  import SignupForm from './entities/SignupForm';
 
   const accountGateway = inject("accountGateway") as AccountGateway;
+  const formSignup = new SignupForm();
+  const form = ref(formSignup);
 
-  const form = ref(new SignupForm());
-
-  // const outputSignup = await accountGateway.signup(input);
-  //   if (outputSignup.accountId) {
-  //     success.value = "Conta criada com sucesso";
-  //   } else {
-  //     error.value = "Falha ao tentar criar a conta";
-  //   }
-
+  formSignup.register("formConfirmed", async (event: any) => {
+    const outputSignup = await accountGateway.signup(event);
+    if (outputSignup.accountId) {
+      form.value.success = "Conta criada com sucesso";
+    } else {
+      form.value.error = "Falha ao tentar criar a conta";
+    }
+  });
 
 </script>
 

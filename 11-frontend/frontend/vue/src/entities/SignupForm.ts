@@ -1,4 +1,6 @@
-export default class SignupForm {
+import Observable from "@/infra/observer/Observable";
+
+export default class SignupForm extends Observable {
     step = 1;
     name = "";
     email = "";
@@ -43,12 +45,13 @@ export default class SignupForm {
             this.error = "A senha e a confirmação da senha devem ser iguais";
             return;
         }
-        const input = {
+        const formConfirmed = {
             name: this.name,
             email: this.email,
             document: this.document,
             password: this.password
         }
+        this.notifyAll("formConfirmed", formConfirmed);
     }
 
     getProgress () {
