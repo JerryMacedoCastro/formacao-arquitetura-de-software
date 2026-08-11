@@ -12,6 +12,10 @@
     step.value++;
   }
 
+  function previous () {
+    step.value--;
+  }
+
   function getProgress () {
     let progress = 0;
     if (name.value) {
@@ -36,7 +40,7 @@
       <span class="span-step">{{ step }}</span>
       <span class="span-progress">{{ getProgress() }}%</span>
     </div>
-    <div>
+    <div v-if="step === 1">
       <div>
         <input type="text" class="input-name" v-model="name" placeholder="Nome"/>
       </div>
@@ -46,6 +50,8 @@
       <div>
         <input type="text" class="input-document" v-model="document" placeholder="Documento"/>
       </div>
+    </div>
+    <div v-if="step === 2">
       <div>
         <input type="text" class="input-password" v-model="password" placeholder="Senha"/>
       </div>
@@ -54,7 +60,8 @@
       </div>
     </div>
     <div>
-      <button class="button-next" @click="next()">Próximo</button>
+      <button v-if="step === 1" class="button-next" @click="next()">Próximo</button>
+      <button v-if="step === 2" class="button-previous" @click="previous()">Anterior</button>
     </div>
   </div>
 </template>
