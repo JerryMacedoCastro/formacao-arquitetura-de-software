@@ -1,5 +1,6 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { inject, ref } from 'vue';
+  import type AccountGateway from './gateways/AccountGateway';
 
   let step = ref(1);
   let name = ref("");
@@ -9,6 +10,8 @@
   let confirmPassword = ref("");
   let error = ref("");
   let success = ref("");
+
+  const accountGateway = inject("accountGateway") as AccountGateway;
 
   function next () {
     error.value = "";
@@ -51,14 +54,7 @@
       document: document.value,
       password: password.value
     }
-    const responseSignup = await fetch("http://localhost:3000/signup", {
-        method: "POST",
-        headers: {
-            "content-type": "application/json"
-        },
-        body: JSON.stringify(input)
-    });
-    const outputSignup = await responseSignup.json();
+    const outputSignup = await accountGateway.signup(input);
     if (outputSignup.accountId) {
       success.value = "Conta criada com sucesso";
     } else {

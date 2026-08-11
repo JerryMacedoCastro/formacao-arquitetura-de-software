@@ -1,7 +1,9 @@
-import { test, expect } from "vitest";
+import { test, expect, beforeEach } from "vitest";
 
-import { mount } from "@vue/test-utils";
+import { mount, VueWrapper } from "@vue/test-utils";
 import App from "../../App.vue";
+import { AccountGatewayFake, AccountGatewayHttp } from "@/gateways/AccountGateway.ts";
+import { AxiosAdapter, FetchAdapter } from "@/infra/http/HttpClient.ts";
 
 export function sleep (time: number) {
     return new Promise((resolve) => {
@@ -11,8 +13,23 @@ export function sleep (time: number) {
     })
 }
 
+let wrapper: VueWrapper;
+
+beforeEach(async () => {
+  // const httpClient = new FetchAdapter();
+  const httpClient = new AxiosAdapter();
+  const accountGateway = new AccountGatewayHttp(httpClient);
+  // const accountGateway = new AccountGatewayFake();
+  wrapper = mount(App, {
+    global: {
+      provide: {
+        accountGateway
+      }
+    }
+  });
+});
+
 test("Deve validar o progresso no preenchimento da tela de criação da conta", async () => {
-  const wrapper = mount(App, {});
   expect(wrapper.get(".span-step").text()).toBe("1");
   expect(wrapper.get(".span-progress").text()).toBe("0%");
   await wrapper.get(".input-name").setValue("John Joe");
@@ -30,7 +47,6 @@ test("Deve validar o progresso no preenchimento da tela de criação da conta", 
 });
 
 test("Deve validar a visibilidade dos elementos da tela de criação de conta", async () => {
-  const wrapper = mount(App, {});
   expect(wrapper.get(".span-step").text()).toBe("1");
   expect(wrapper.find(".input-name").exists()).toBe(true);
   expect(wrapper.find(".input-email").exists()).toBe(true);
@@ -66,7 +82,6 @@ test("Deve validar a visibilidade dos elementos da tela de criação de conta", 
 });
 
 test("Deve validar o fluxo de mensagens de erro de preenchimento da tela de criação da conta", async () => {
-  const wrapper = mount(App, {});
   await wrapper.get(".button-next").trigger("click");
   expect(wrapper.get(".span-error").text()).toBe("Preencha o nome");
   await wrapper.get(".input-name").setValue("John Joe");
@@ -92,7 +107,6 @@ test("Deve validar o fluxo de mensagens de erro de preenchimento da tela de cria
 });
 
 test("Deve chamar confirmar a criação da conta com o backend", async () => {
-  const wrapper = mount(App, {});
   await wrapper.get(".input-name").setValue("John Joe");
   await wrapper.get(".input-email").setValue("john.doe@gmail.com");
   await wrapper.get(".input-document").setValue("97456321558");
