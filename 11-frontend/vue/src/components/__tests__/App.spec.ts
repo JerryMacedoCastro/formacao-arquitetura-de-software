@@ -3,7 +3,7 @@ import { test, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 import App from "../../App.vue";
 
-test("Deve validar o fluxo de preenchimento da tela de criação da conta", async () => {
+test("Deve validar o progresso no preenchimento da tela de criação da conta", async () => {
   const wrapper = mount(App, {});
   expect(wrapper.get(".span-step").text()).toBe("1");
   expect(wrapper.get(".span-progress").text()).toBe("0%");
@@ -31,6 +31,10 @@ test("Deve validar a visibilidade dos elementos da tela de criação de conta", 
   expect(wrapper.find(".input-confirm-password").exists()).toBe(false);
   expect(wrapper.find(".button-next").exists()).toBe(true);
   expect(wrapper.find(".button-previous").exists()).toBe(false);
+  expect(wrapper.find(".button-confirm").exists()).toBe(false);
+  await wrapper.get(".input-name").setValue("John Joe");
+  await wrapper.get(".input-email").setValue("john.doe@gmail.com");
+  await wrapper.get(".input-document").setValue("11111111111");
   await wrapper.get(".button-next").trigger("click");
   expect(wrapper.get(".span-step").text()).toBe("2");
   expect(wrapper.find(".input-name").exists()).toBe(false);
@@ -40,6 +44,7 @@ test("Deve validar a visibilidade dos elementos da tela de criação de conta", 
   expect(wrapper.find(".input-confirm-password").exists()).toBe(true);
   expect(wrapper.find(".button-next").exists()).toBe(false);
   expect(wrapper.find(".button-previous").exists()).toBe(true);
+  expect(wrapper.find(".button-confirm").exists()).toBe(true);
   await wrapper.get(".button-previous").trigger("click");
   expect(wrapper.get(".span-step").text()).toBe("1");
   expect(wrapper.find(".input-name").exists()).toBe(true);
@@ -49,4 +54,31 @@ test("Deve validar a visibilidade dos elementos da tela de criação de conta", 
   expect(wrapper.find(".input-confirm-password").exists()).toBe(false);
   expect(wrapper.find(".button-next").exists()).toBe(true);
   expect(wrapper.find(".button-previous").exists()).toBe(false);
+  expect(wrapper.find(".button-confirm").exists()).toBe(false);
+});
+
+test("Deve validar o fluxo de mensagens de erro de preenchimento da tela de criação da conta", async () => {
+  const wrapper = mount(App, {});
+  await wrapper.get(".button-next").trigger("click");
+  expect(wrapper.get(".span-error").text()).toBe("Preencha o nome");
+  await wrapper.get(".input-name").setValue("John Joe");
+  await wrapper.get(".button-next").trigger("click");
+  expect(wrapper.get(".span-error").text()).toBe("Preencha o email");
+  await wrapper.get(".input-email").setValue("john.doe@gmail.com");
+  await wrapper.get(".button-next").trigger("click");
+  expect(wrapper.get(".span-error").text()).toBe("Preencha o documento");
+  await wrapper.get(".input-document").setValue("11111111111");
+  await wrapper.get(".button-next").trigger("click");
+  expect(wrapper.get(".span-error").text()).toBe("");
+  await wrapper.get(".button-confirm").trigger("click");
+  expect(wrapper.get(".span-error").text()).toBe("Preencha a senha");
+  await wrapper.get(".input-password").setValue("asdQWE123");
+  await wrapper.get(".button-confirm").trigger("click");
+  expect(wrapper.get(".span-error").text()).toBe("Preencha a confirmação da senha");
+  await wrapper.get(".input-confirm-password").setValue("asdQWE");
+  await wrapper.get(".button-confirm").trigger("click");
+  expect(wrapper.get(".span-error").text()).toBe("A senha e a confirmação da senha devem ser iguais");
+  await wrapper.get(".input-confirm-password").setValue("asdQWE123");
+  await wrapper.get(".button-confirm").trigger("click");
+  expect(wrapper.get(".span-error").text()).toBe("");
 });

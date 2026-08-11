@@ -7,13 +7,43 @@
   let document = ref("");
   let password = ref("");
   let confirmPassword = ref("");
+  let error = ref("");
 
   function next () {
+    error.value = "";
+    if (!name.value) {
+      error.value = "Preencha o nome";
+      return;
+    }
+    if (!email.value) {
+      error.value = "Preencha o email";
+      return;
+    }
+    if (!document.value) {
+      error.value = "Preencha o documento";
+      return;
+    }
     step.value++;
   }
 
   function previous () {
     step.value--;
+  }
+
+  function confirm () {
+    error.value = "";
+    if (!password.value) {
+      error.value = "Preencha a senha";
+      return;
+    }
+    if (!confirmPassword.value) {
+      error.value = "Preencha a confirmação da senha";
+      return;
+    }
+    if (password.value !== confirmPassword.value) {
+      error.value = "A senha e a confirmação da senha devem ser iguais";
+      return;
+    }
   }
 
   function getProgress () {
@@ -60,8 +90,10 @@
       </div>
     </div>
     <div>
-      <button v-if="step === 1" class="button-next" @click="next()">Próximo</button>
-      <button v-if="step === 2" class="button-previous" @click="previous()">Anterior</button>
+      <button v-if="step === 1" class="button-next" @click="next()">Continuar</button>
+      <button v-if="step === 2" class="button-previous" @click="previous()">Voltar</button>
+      <button v-if="step === 2" class="button-confirm" @click="confirm()">Confirmar</button>
+      <span class="span-error">{{ error }}</span>
     </div>
   </div>
 </template>
