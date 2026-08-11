@@ -20,7 +20,7 @@ export default class DepthHandler {
                 marketId: event.marketId,
                 side: event.side,
                 price: event.price,
-                quantity: event.quantity
+                quantity: event.fillQuantity * -1
             }
             await updateDepth.execute(input);
         });

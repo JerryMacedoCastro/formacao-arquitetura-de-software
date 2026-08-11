@@ -34,7 +34,7 @@ export default class Order extends Observable {
         if (this.getAvailableQuantity() === 0) {
             this.status = "closed";
         }
-        await this.notifyAll(new OrderFilled(this.getOrderId(), quantity, price));
+        await this.notifyAll(new OrderFilled(this.getOrderId(), this.marketId, this.side, this.price, quantity, price));
     }
 
     getAvailableQuantity () {
