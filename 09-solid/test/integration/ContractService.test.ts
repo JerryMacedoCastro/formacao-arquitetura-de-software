@@ -1,4 +1,6 @@
 import { expect, test } from "vitest";
+import { ContractDataDatabase, ContractDataFake } from "../../src/ContractData.ts";
+import ContractService from "../../src/ContractService.ts";
 
 test("Deve contratar um financiamento utilizando a tabela Price", async () => {
     const input = {
@@ -9,14 +11,9 @@ test("Deve contratar um financiamento utilizando a tabela Price", async () => {
         numberOfInstallments: 12,
         type: "PRICE"
     };
-    const response = await fetch("http://localhost:3000/process_contract", {
-        method: "POST",
-        headers: {
-            "content-type": "application/json"
-        },
-        body: JSON.stringify(input)
-    });
-    const output = await response.json();
+    const contractData = new ContractDataFake();
+    const contractService = new ContractService(contractData);
+    const output = await contractService.processContract(input);
     expect(output.contractId).toBeDefined();
     expect(output.financedAmount).toBe(120000);
     expect(output.type).toBe("PRICE");
@@ -47,14 +44,9 @@ test("Deve contratar um financiamento utilizando o SAC", async () => {
         numberOfInstallments: 12,
         type: "SAC"
     };
-    const response = await fetch("http://localhost:3000/process_contract", {
-        method: "POST",
-        headers: {
-            "content-type": "application/json"
-        },
-        body: JSON.stringify(input)
-    });
-    const output = await response.json();
+    const contractData = new ContractDataFake();
+    const contractService = new ContractService(contractData);
+    const output = await contractService.processContract(input);
     expect(output.contractId).toBeDefined();
     expect(output.financedAmount).toBe(120000);
     expect(output.type).toBe("SAC");

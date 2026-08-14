@@ -1,15 +1,19 @@
 import express, { type Request, type Response } from "express";
 import cors from "cors";
-import { saveContract } from "./ContractService.ts";
+import ContractService from "./ContractService.ts";
+import { ContractDataDatabase } from "./ContractData.ts";
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.post("/contracts", async (req: Request, res: Response) => {
+const contractData = new ContractDataDatabase();
+const contractService = new ContractService(contractData);
+
+app.post("/process_contract", async (req: Request, res: Response) => {
     const input = req.body;
     try {
-        const output = await saveContract(input);
+        const output = await contractService.processContract(input);
         res.json(output);
     } catch (error: any) {
         res.status(400).json({
