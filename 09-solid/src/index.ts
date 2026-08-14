@@ -1,14 +1,14 @@
 import express, { type Request, type Response } from "express";
 import cors from "cors";
 import ContractService from "./ContractService.ts";
-import { ContractDataDatabase } from "./ContractData.ts";
+import { ContractRepositoryDatabase } from "./ContractRepository.ts";
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-const contractData = new ContractDataDatabase();
-const contractService = new ContractService(contractData);
+const contractRepository = new ContractRepositoryDatabase();
+const contractService = new ContractService(contractRepository);
 
 app.post("/process_contract", async (req: Request, res: Response) => {
     const input = req.body;

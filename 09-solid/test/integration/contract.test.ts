@@ -55,6 +55,7 @@ test("Deve contratar um financiamento utilizando o SAC", async () => {
         body: JSON.stringify(input)
     });
     const output = await response.json();
+    console.log(output);
     expect(output.contractId).toBeDefined();
     expect(output.financedAmount).toBe(120000);
     expect(output.type).toBe("SAC");

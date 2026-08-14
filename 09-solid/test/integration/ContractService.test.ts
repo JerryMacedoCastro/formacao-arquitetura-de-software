@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
-import { ContractDataDatabase, ContractDataFake } from "../../src/ContractData.ts";
 import ContractService from "../../src/ContractService.ts";
+import { ContractRepositoryFake } from "../../src/ContractRepository.ts";
 
 test("Deve contratar um financiamento utilizando a tabela Price", async () => {
     const input = {
@@ -11,8 +11,8 @@ test("Deve contratar um financiamento utilizando a tabela Price", async () => {
         numberOfInstallments: 12,
         type: "PRICE"
     };
-    const contractData = new ContractDataFake();
-    const contractService = new ContractService(contractData);
+    const contractRepository = new ContractRepositoryFake();
+    const contractService = new ContractService(contractRepository);
     const output = await contractService.processContract(input);
     expect(output.contractId).toBeDefined();
     expect(output.financedAmount).toBe(120000);
@@ -44,8 +44,8 @@ test("Deve contratar um financiamento utilizando o SAC", async () => {
         numberOfInstallments: 12,
         type: "SAC"
     };
-    const contractData = new ContractDataFake();
-    const contractService = new ContractService(contractData);
+    const contractRepository = new ContractRepositoryFake();
+    const contractService = new ContractService(contractRepository);
     const output = await contractService.processContract(input);
     expect(output.contractId).toBeDefined();
     expect(output.financedAmount).toBe(120000);
@@ -63,6 +63,39 @@ test("Deve contratar um financiamento utilizando o SAC", async () => {
         installmentNumber: 12,
         amount: 10100,
         interest: 100,
+        amortization: 10000,
+        balance: 0
+    });
+});
+
+test("Deve contratar um financiamento sem juros", async () => {
+    const input = {
+        customerName: "Ana Silva",
+        propertyValue: 140000,
+        downPayment: 20000,
+        interestRate: 0,
+        numberOfInstallments: 12,
+        type: "FREE"
+    };
+    const contractRepository = new ContractRepositoryFake();
+    const contractService = new ContractService(contractRepository);
+    const output = await contractService.processContract(input);
+    expect(output.contractId).toBeDefined();
+    expect(output.financedAmount).toBe(120000);
+    expect(output.type).toBe("FREE");
+    expect(output.installments).toHaveLength(12);
+    expect(output.installments[0]).toEqual({
+        installmentNumber: 1,
+        amount: 10000,
+        interest: 0,
+        amortization: 10000,
+        balance: 110000
+    });
+    expect(output.installments[1].amount).toBe(10000);
+    expect(output.installments[11]).toEqual({
+        installmentNumber: 12,
+        amount: 10000,
+        interest: 0,
         amortization: 10000,
         balance: 0
     });
