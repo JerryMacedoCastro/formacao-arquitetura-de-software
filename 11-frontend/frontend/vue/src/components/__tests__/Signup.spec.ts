@@ -1,7 +1,7 @@
 import { test, expect, beforeEach } from "vitest";
 
 import { mount, VueWrapper } from "@vue/test-utils";
-import App from "../../App.vue";
+import Signup from "../../views/Signup.vue";
 import { AccountGatewayFake, AccountGatewayHttp } from "@/gateways/AccountGateway.ts";
 import { AxiosAdapter, FetchAdapter } from "@/infra/http/HttpClient.ts";
 
@@ -20,7 +20,7 @@ beforeEach(async () => {
   const httpClient = new AxiosAdapter();
   const accountGateway = new AccountGatewayHttp(httpClient);
   // const accountGateway = new AccountGatewayFake();
-  wrapper = mount(App, {
+  wrapper = mount(Signup, {
     global: {
       provide: {
         accountGateway
