@@ -1,4 +1,4 @@
-import type { Installment } from "./ContractService.ts";
+import type Installment from "./Installment.ts";
 import InstallmentCalculatorFactory from "./InstallmentCalculatorFactory.ts";
 
 export default class Contract {

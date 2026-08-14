@@ -1,12 +1,11 @@
 import Contract from "./Contract.ts";
-import type ContractRepository from "./ContractRepository.ts";
 
-export default class ContractService {
+export default class ProcessContract {
 
-    constructor (readonly contractRepository: ContractRepository) {
+    constructor (readonly contractRepository: ProcessContractContractRepository) {
     }
 
-    async processContract (input: any): Promise<any> {
+    async execute (input: Input): Promise<any> {
         const contract = Contract.create(input.customerName, input.propertyValue, input.downPayment, input.interestRate, input.numberOfInstallments, input.type);
         contract.calculateInstallments();
         await this.contractRepository.saveContract(contract);
@@ -19,4 +18,15 @@ export default class ContractService {
     }
 }
 
-export type Installment = { installmentNumber: number, amount: number, interest: number, amortization: number, balance: number };
+type Input = {
+    customerName: string,
+    propertyValue: number, 
+    downPayment: number,
+    interestRate: number,
+    numberOfInstallments: number,
+    type: string
+}
+
+export interface ProcessContractContractRepository {
+    saveContract (contract: Contract): Promise<void>;
+}

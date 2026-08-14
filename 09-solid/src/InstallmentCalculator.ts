@@ -1,5 +1,5 @@
 import type Contract from "./Contract.ts";
-import type { Installment } from "./ContractService.ts";
+import type Installment from "./Installment.ts";
 
 export default interface InstallmentCalculator {
     calculate (contract: Contract): Installment[];
