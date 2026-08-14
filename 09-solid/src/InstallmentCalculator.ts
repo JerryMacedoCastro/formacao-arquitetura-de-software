@@ -11,7 +11,7 @@ export class PriceInstallmentCalculator implements InstallmentCalculator {
         const installments: Installment[] = [];
         let balance = contract.getFinancedAmount();
         const factor = Math.pow(1 + contract.getMonthlyInterestRate(), contract.numberOfInstallments);
-        const fixedAmount = contract.getFinancedAmount() * (contract.getMonthlyInterestRate() * factor) / (factor - 1);
+        const fixedAmount = (contract.getMonthlyInterestRate() === 0) ? (contract.getFinancedAmount()/contract.numberOfInstallments) : (contract.getFinancedAmount() * (contract.getMonthlyInterestRate() * factor) / (factor - 1));
         for (let installmentNumber = 1; installmentNumber <= contract.numberOfInstallments; installmentNumber++) {
             const interest = balance * contract.getMonthlyInterestRate();
             const amortization = installmentNumber === contract.numberOfInstallments ? balance : fixedAmount - interest;
